@@ -1,5 +1,4 @@
-Description
-===========
+# Description
 
 Chef cookbook for deploying applications written with [Play framework](http://www.playframework.com/) on Amazon's AWS [OpsWorks](http://aws.amazon.com/opsworks/). Play applications are deployed as services. Attributes can be configured to customize installation and deployment.
 
@@ -7,36 +6,48 @@ Chef cookbook for deploying applications written with [Play framework](http://ww
 This cookbook is experimental and a work in progress until otherwise mentioned. Please test vigorously if you use this in a production app. Otherwise Bon Appétit. :)
 
 
-Platform
---------
+## Platform
+
 - Amazon Linux
 - Ubuntu 12.04*
 
 
-Cookbooks
----------
+## Cookbooks
 
 This cookbook depends on the following cookbooks:
 - [java](http://community.opscode.com/cookbooks/java)
 - [deploy](https://github.com/aws/opsworks-cookbooks/tree/release-chef-11.4/deploy) (AWS OpsWorks)
 
 
-Attributes
-----------
+## Usage
 
-**Play installation**
+1. Create a new Stack.
+   - Click on the `Advance` link and choose **User custom Chef cookbooks** fields with a custom .
+   - In the Repository Url enter `https://github.com/saad3645/opsworks-play-cookbooks.git`, or if you forked this repo use the url for that instead.
+   - Optionally add some custom JSON. Please refer to the [Attributes](#attributes) section below for example usage.
+2. Create a new custom layer:
+   - Add play2::setup to the setup lifecyle event recipes
+   - Add play2::deploy to the deploy lifecyle event recipes
+   - Start a new instance
+3. Add your Play application to the stack, and deploy it.
+
+
+## Attributes
+
+### Play installation
 
 |Key            |Type    |Description                |Default|
 |---------------|--------|---------------------------|-------|
 |`version`      |`String`|The Play version to install|`2.2.2`|
 |`base_url`     |`String`|The Base url for downloading Play.|`http://downloads.typesafe.com/play`|
-|`download_url` |`String`|The full constructed url for downloading Play. This is constructed by concatenating the `version` with the `base_url`. **Note** that if this attribute is overriden then the `base_url` becomes defunct and ignored.|`{base_url}/{version}/play-{version}.zip`|
+|`download_url` |`String`|The fully constructed url for downloading Play. This is produced by concatenating the `version` with the `base_url`. **Note** that if this attribute is overriden then the `base_url` becomes defunct and is ignored.|`{base_url}/{version}/play-{version}.zip`|
 |`download_path`|`String`|The download path          |`/tmp` |
 |`install_path` |`String`|The installation path      |`/opt` | 
 |`install_dir`  |`String`|The name of Play's installation directory|`play-2.2.2`| 
 
 
-**Usage**
+<br/>
+**Example usage**
 
 ```json
 {
@@ -51,8 +62,7 @@ Attributes
 }
 ```
 
-<br/>
-**Deploying a Play app**
+### Deploying Play apps
 
 |Key                      |Type    |Description                |Default|
 |-------------------------|--------|---------------------------|-------|
@@ -65,7 +75,11 @@ Attributes
 |`options.logger.file`    |`String`|The alternative logback configuration file to be loaded from the file system. Has higher precedence that `logger.url`.|`nil`|
 |`options.logger.url`     |`String`|The alternative logback configuration file to be loaded from an URL.|`nil`|
 
-**Usage**
+
+<br/>
+**Example usage**
+
+For all apps in your Stack
 
 ```json
 {
@@ -95,7 +109,7 @@ Attributes
 ```
 
 <br/>
-Alternatively if you want to customize each individual app, you can specify the deploy attributes for each app in your stack:
+Alternatively you can override the deploy attributes for each individual app. Supply custom attributes when you add a new App in your stack for each app you want to customize:
 
 ```json
 {
@@ -126,17 +140,15 @@ Alternatively if you want to customize each individual app, you can specify the 
 }
 ```
 
-The second json will override the deploy attributes in the first for that app only. In other words if you specify the deploy attributes for an individual app, it will override anything you specified in your gloabl deploy attributes for that app only.
+If you want you can provide a global deploy json at the beginning when you create your Stack, and then override the apps you want using a second json for each app you want to customize. The second json will override the deploy attributes for that app only.
 
 
-Contributing
-------------
+## Contributing
 
 If your are a ruby guy, please contribute. This cookbook was made by a developer who knows nothing of ruby. You can surely improve the code.
 
 
-License and Authors
--------------------
+## License and Authors
 
 This collection is based on and greatly influenced by several other play2 cookbooks written by various authors and contributors before this. Much of the credit for this cookbook goes to these developers. My special thanks to:
 
