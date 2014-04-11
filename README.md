@@ -22,12 +22,12 @@ This cookbook depends on the following cookbooks:
 ## Usage
 
 1. Create a new Stack.
-   - Click on the `Advance` link and choose **User custom Chef cookbooks** fields with a custom .
-   - In the Repository Url enter `https://github.com/saad3645/opsworks-play-cookbooks.git`, or if you forked this repo use the url for that instead.
+   - Click on the "Advance" link and choose **Use custom Chef cookbooks**.
+   - In the Repository Url field enter `https://github.com/saad3645/opsworks-play-cookbooks.git`, or if you forked this repo use the url for your repo instead.
    - Optionally add some custom JSON. Please refer to the [Attributes](#attributes) section below for example usage.
 2. Create a new custom layer:
-   - Add play2::setup to the setup lifecyle event recipes
-   - Add play2::deploy to the deploy lifecyle event recipes
+   - Add opsworks_play2::setup to the setup lifecyle event recipes
+   - Add opsworks_play2::deploy to the deploy lifecyle event recipes
    - Start a new instance
 3. Add your Play application to the stack, and deploy it.
 
@@ -79,7 +79,7 @@ This cookbook depends on the following cookbooks:
 <br/>
 **Example usage**
 
-For all apps in your Stack
+You can specify a global deploy JSON, for every app in your Stack. Provide a custom JSON like the one below while creating your Stack:
 
 ```json
 {
@@ -109,7 +109,7 @@ For all apps in your Stack
 ```
 
 <br/>
-Alternatively you can override the deploy attributes for each individual app. Supply custom attributes when you add a new App in your stack for each app you want to customize:
+Alternatively you can override the deploy attributes for each individual app. Simply supply a custom JSON when you add a new App, for each app you want to customize:
 
 ```json
 {
@@ -140,7 +140,7 @@ Alternatively you can override the deploy attributes for each individual app. Su
 }
 ```
 
-If you want you can provide a global deploy json at the beginning when you create your Stack, and then override the apps you want using a second json for each app you want to customize. The second json will override the deploy attributes for that app only.
+If you want you can provide a global deploy json at the beginning when you create your Stack, and then again override individual apps using a second json for each app you want to customize.
 
 
 ## Contributing
