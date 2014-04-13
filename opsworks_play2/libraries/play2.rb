@@ -45,3 +45,12 @@ def play_options(app_node)
 
   return options.join(" ")
 end
+
+
+#def normalize_app_name(build_file_path, app_name)
+#  File.open(build_file_path).readlines.each do |line|
+#    if line.match('^name\\s*:=\\s*\"(([A-Za-z0-9_]+)(-[A-Za-z0-9_]+)*)+\"$')
+#      line.sub('-', '_')
+#	end
+#  end	
+#end

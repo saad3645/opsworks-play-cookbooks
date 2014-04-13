@@ -35,14 +35,14 @@ define :deploy_play2 do
   directory "#{app_dir}/logs" do
     owner "deploy"
     group "apache"
-    mode 0755
+    mode 0766
     action :create
   end
 
   # Stage App
   execute "stage-play-app #{application}" do
     cwd app_dir
-    command "play clean stage"
+    command "play clean stage &> #{app_dir}/logs/build.log"
   end
 
   # Create the service for the application
