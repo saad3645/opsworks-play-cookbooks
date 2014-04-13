@@ -20,14 +20,14 @@
 
 include_recipe "java"
 
-play_archive = "#{node[:play][:install_dir]}.zip"
-play_path = "#{node[:play][:install_path]}/#{node[:play][:install_dir]}"
+play_archive = "#{node[:play][:home]}.zip"
+play_path = "#{node[:play][:install_prefix]}/#{node[:play][:home]}"
 play_user = node[:play][:user]
 play_group = node[:play][:group]
 
 
 # Download Play Framework
-remote_file "#{node[:play][:download_path]}/#{play_archive}" do
+remote_file "#{node[:play][:download_prefix]}/#{play_archive}" do
   source node[:play][:download_url]
   action :create_if_missing
 end
@@ -35,18 +35,11 @@ end
 # Unzip and Install
 execute "install-play" do
   user "root"
-  cwd node[:play][:download_path]
-  command "unzip #{play_archive} -d #{node[:play][:install_path]}"
+  cwd node[:play][:download_prefix]
+  command "unzip #{play_archive} -d #{node[:play][:install_prefix]}"
   not_if do
     File.exists?("#{play_path}")
   end
-end
-
-# Set Permissions
-execute "set-play-permissions" do
-  user "root"
-  cwd node[:play][:install_path]
-  command "chmod -R 0775 #{node[:play][:install_dir]}"
 end
 
 # Create Symbolic Link
@@ -55,18 +48,36 @@ execute "create-symlink-to-play-dir" do
   command "ln -sf #{play_path}/play /usr/bin/play"
 end
 
-# Initialize Play (and Get Scala if needed)
+# Initialize Play (and Get Scala/sbt)
 execute "initialize-play" do
   user "root"
   command "play help"
 end
 
-# Cleanup
-execute "cleanup-play-setup" do
+# Set Permissions
+execute "set-play-permissions" do
   user "root"
-  cwd node[:play][:download_path]
-  command "rm #{play_archive}"
+  command <<-EOF
+    chmod 0755 #{play_path}/play
+    chmod 0755 #{play_path}/framework/sbt/sbt-launch.jar
+    chmod 0664 #{play_path}/framework/sbt/boot/sbt.boot.lock
+    chmod 0664 #{play_path}/framework/sbt/boot/update.log
+  EOF
+end
+
+# Cleanup
+execute "delete-downloaded-play-zip" do
+  user "root"
+  command "rm #{node[:play][:download_prefix]}/#{play_archive}"
   only_if do
-    File.exists?("#{node[:play][:download_path]}/#{play_archive}")
+    File.exists?("#{node[:play][:download_prefix]}/#{play_archive}")
+  end
+end
+
+execute "delete-play-samples" do
+  user "root"
+  command "rm -R #{play_path}/samples"
+  only_if do
+    File.exists?("#{play_path}/samples")
   end
 end
